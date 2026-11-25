@@ -117,7 +117,9 @@ the home screen.
 
 Every [pre-release](https://github.com/BlackBearRedux/ps5-fsr4/releases)
 from 01.000.000 on has `ps5-fsr4-showcase-VERSION-PPSA99011.zip`, built by GitHub
-Actions. Extract it, upload the `PPSA99011` folder to `/data/homebrew/` on a
+Actions. The [Build workflow](https://github.com/BlackBearRedux/ps5-fsr4/actions/workflows/build.yml)
+also provides a showcase ZIP for each successful build of `main`.
+Extract it, upload the `PPSA99011` folder to `/data/homebrew/` on a
 PS5 running a homebrew loader with ShadowMountPlus, and start **PS5 FSR4
 Showcase** from the home screen once it is registered. Release 0.1.0 carried
 an earlier showcase under the title PPSA99010; the two install side by side.
@@ -130,8 +132,9 @@ Stage the SDK first (`make sdk`, see [BUILDING.md](../../BUILDING.md)), then:
 make showcase
 ```
 
-This builds `build/fsr4-showcase/PPSA99011` with the SDK's warmed pipeline
-cache. Upload the `PPSA99011` folder to `/data/homebrew/` and launch it from the
+This builds `build/fsr4-showcase/PPSA99011`. Without the optional GPU pipeline
+cache, the app compiles pipelines at startup. Upload the `PPSA99011` folder to
+`/data/homebrew/` and launch it from the
 home screen once it is registered. The app runs until it is closed. It writes
 `fsr4-showcase-log.txt` to `/data/fsr4-results` (or to its own `results`
 folder) with `FSR4_SHOWCASE_*` lines: setup, chapters, benchmark results and

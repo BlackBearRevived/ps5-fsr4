@@ -2,9 +2,10 @@
 
 GitHub Actions builds everything from pinned public inputs
 ([`.github/workflows/build.yml`](../.github/workflows/build.yml)). Every pull
-request, push to `main` and version tag builds the driver, the FSR4 runtime,
-the SDK, the demo and the showcase, checks the pipeline cache when available, runs the host tests and
-packages a release. A `v*` tag publishes that package as a GitHub pre-release.
+request, push to `main` and version tag builds the driver, FSR4 runtime, SDK,
+demo and showcase. The workflow checks the pipeline cache when available,
+runs the host tests and packages the build. A version tag publishes that
+package as a GitHub pre-release.
 Every run keeps the showcase app ZIP as a workflow artifact; a pull request's is
 named by its number and commit ([pull-request builds](PULL_REQUEST_BUILDS.md)).
 
@@ -80,8 +81,8 @@ for more than a minute instead of about 0.1 s. To make a new one:
 1. Validate the commit on a PS5: build the showcase's self-test
    (`make showcase SHOWCASE_ARGS=--selftest`), run it, and check that it ends
    with `FSR4_SHOWCASE_SELFTEST_DONE`, that every `FSR4_SHOWCASE_OUTPUT` line
-   shows a `setup_ms` of about 0.1 s, which means the pipeline cache is used,
-   and that the frames it saved look right.
+   contains the expected output, and that the frames it saved look right.
+   When a pipeline cache is included, check for a `setup_ms` of about 0.1 s.
 2. Tag and push. Releases are numbered like PlayStation content versions,
    which is also what the console reports for the installed showcase:
    `git tag v01.000.000 && git push origin v01.000.000`.

@@ -165,8 +165,7 @@ def release(out, version):
         names = set(z.namelist())
         for required in (*(f"{TITLE_ID}/{f}" for f in ("eboot.bin", "sce_module/libc.prx", "sce_sys/param.json",
                                                           "sce_sys/icon0.png", "sce_sys/pic0.dds", "sce_sys/pic1.dds",
-                                                          "sce_sys/snd0.at9", "assets/pipeline-cache.bin",
-                                                          "assets/signs.bin")),
+                                                          "sce_sys/snd0.at9", "assets/signs.bin")),
                          "README.md", "SHA256SUMS", "notices/AMD-SDK-LICENSE.md", "notices/PROVENANCE.md"):
             if required not in names:
                 raise SystemExit(f"{name} lacks {required}")
