@@ -5,7 +5,7 @@
 PYTHON ?= python3
 CC ?= cc
 DRIVER ?= external/ps5-vulkan
-DRIVER_URL ?= https://github.com/blackbearreloaded/ps5-vulkan.git
+DRIVER_URL ?= https://github.com/mpereiraesaa/ps5-vulkan.git
 # The driver revision this checkout pins (its submodule commit); empty outside git.
 DRIVER_REV ?= $(shell git ls-tree HEAD $(DRIVER) 2>/dev/null | awk '{print $$3}')
 DXIL_SPIRV_DIR ?= ../references/dxil-spirv
@@ -82,7 +82,7 @@ inputs:
 # VERSION=01.000.000, after make sdk: the release assets in build/release (docs/RELEASING.md).
 release:
 	test -n "$(VERSION)"
-	$(PYTHON) tools/fetch_build_inputs.py --check-cache
+	@if [ -f build/fsr4-runtime/pipeline-cache-ps5.bin ]; then $(PYTHON) tools/fetch_build_inputs.py --check-cache; fi
 	$(PYTHON) tools/build_fsr4_showcase.py --release $(VERSION)
 	$(PYTHON) tools/package_fsr4_release.py --version $(VERSION)
 

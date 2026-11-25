@@ -3,7 +3,7 @@
 ## Requirements
 
 `make inputs` fetches the pinned public inputs below (the native app template
-with its payload SDK, dxil-spirv, DXC, the BC250 DLL and the pipeline cache)
+with its payload SDK, dxil-spirv, DXC, the BC250 DLL and the optional pipeline cache)
 into `build/`, and `eval "$(python3 tools/fetch_build_inputs.py --env)"` points
 the builds at them. GitHub Actions builds the same way
 ([docs/RELEASING.md](docs/RELEASING.md)).
@@ -55,8 +55,9 @@ restages its SDK without this profile, so `make sdk` restages it first; after
 running the driver tests, run `make driver-sdk` before building FSR4 applications. To build against a driver
 checkout elsewhere, set `PS5VK_ROOT` for the tools and `DRIVER` for make.
 
-A pipeline cache is only valid for the `libps5vk.a` build that saved it; see
-[the SDK guide](docs/FSR4_SDK.md).
+A pipeline cache is only valid for the `libps5vk.a` build that saved it. When
+the pinned asset is unavailable, the showcase compiles pipelines on the PS5
+at startup. See the [SDK guide](docs/FSR4_SDK.md).
 
 The pass tables come from `tools/build_fsr4_runtime.py`. It copies the shaders
 and INT8 models out of the DLL (`tools/fsr4_extract_dll.py`, which reads the

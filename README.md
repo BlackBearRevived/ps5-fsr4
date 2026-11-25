@@ -10,7 +10,7 @@ frame on the right.*
 > [!WARNING]
 > **Experimental.** FSR4 runs natively on the PS5 and passes its acceptance
 > against the WARP reference in every captured scenario up to 2560×1440.
-> [Pre-releases](https://github.com/blackbearreloaded/ps5-fsr4/releases) carry
+> [Pre-releases](https://github.com/BlackBearRedux/ps5-fsr4/releases) carry
 > the showcase app, the SDK and their source. The SDK is built from the BC250
 > RC11 build of AMD's FSR4 provider and needs a diagnostic profile of the Vulkan
 > driver.
@@ -50,7 +50,7 @@ This project is independent of the upstream driver project.
   rendering, a paired magnifier and a benchmark of the upscaler.
 - GitHub Actions builds and tests everything from pinned public inputs for every
   pull request and, on `main`, when started by hand; a `v*` tag publishes a
-  [pre-release](https://github.com/blackbearreloaded/ps5-fsr4/releases) with
+  [pre-release](https://github.com/BlackBearRedux/ps5-fsr4/releases) with
   the showcase app, the SDK and their source ([releasing](docs/RELEASING.md)).
 - `tools/build_fsr4_sdk.py` stages the SDK: `libps5_fsr4.a`, its header,
   notices and a warmed pipeline cache ([FSR4 SDK](docs/FSR4_SDK.md)).

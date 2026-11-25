@@ -33,7 +33,7 @@ The complete license text is in [`LICENSE`](LICENSE).
 ## The Vulkan driver
 
 `external/ps5-vulkan` is a git submodule:
-[BlackBearReloaded's fork](https://github.com/blackbearreloaded/ps5-vulkan) of
+the archived BlackBearReloaded fork pinned at a commit available from
 [Manuel Pereira's ps5-vulkan](https://github.com/mpereiraesaa/ps5-vulkan),
 licensed `GPL-3.0-or-later`. Its own `LICENSING.md` covers its dependencies and
 derived sources. Programs linked with the staged SDK (`libps5vk.a`,
@@ -52,7 +52,7 @@ notice. The BC250 project publishes its modified DLL the same way.
 
 ## Release archives
 
-The [pre-releases](https://github.com/blackbearreloaded/ps5-fsr4/releases)
+The [pre-releases](https://github.com/BlackBearRedux/ps5-fsr4/releases)
 combine GPL-3.0-or-later code (this repository, the Vulkan driver with
 ps5-agc-gears, the native app template), the MIT FSR4 material and the MIT
 shader compiler (opengnm-psbc). Every archive carries `notices/`: AMD's notice,

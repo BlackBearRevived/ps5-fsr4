@@ -1,8 +1,8 @@
 {
   "schema": 1,
   "app_template": {
-    "repository": "https://github.com/blackbearreloaded/ps5-native-app-boilerplate.git",
-    "commit": "37dd53602bdead63936f718004555ba10154be48",
+    "repository": "https://github.com/BlackBearRedux/ps5-native-app-boilerplate.git",
+    "commit": "f5b6c9708351b35d1987e43c2ee8103daeadce57",
     "path": "build/inputs/lab/third_party/ps5-native-app-boilerplate"
   },
   "dxil_spirv": {
@@ -50,7 +50,7 @@
     "path": "build/inputs/shader-tools"
   },
   "pipeline_cache": {
-    "url": "https://github.com/blackbearreloaded/ps5-fsr4/releases/download/build-inputs/pipeline-cache-ps5-6f0e6bcba425.bin",
+    "url": "https://github.com/BlackBearRedux/ps5-fsr4/releases/download/build-inputs/pipeline-cache-ps5-6f0e6bcba425.bin",
     "sha256": "6f0e6bcba4258153fbe725cca1b4ded19e5208a340f742ec8a54bf7879071a06",
     "table_sha256": "8e6fd33f4c07d3958342ae59c869eac879b4a6898283a1f4341ece7e8da8af9e",
     "cache_uuid": "e1679a70e0a6aa98b534c63bf21ac45d",

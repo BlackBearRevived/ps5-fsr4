@@ -2,11 +2,9 @@
 
 GitHub Actions builds everything from pinned public inputs
 ([`.github/workflows/build.yml`](../.github/workflows/build.yml)). Every pull
-request and every `v*` tag builds the driver, the FSR4 runtime, the SDK, the
-demo and the showcase, checks the pipeline cache, runs the host tests and
+request, push to `main` and version tag builds the driver, the FSR4 runtime,
+the SDK, the demo and the showcase, checks the pipeline cache when available, runs the host tests and
 packages a release. A `v*` tag publishes that package as a GitHub pre-release.
-A push to `main` builds nothing: a build on `main` is started by hand
-(Actions → Build → Run workflow, or `gh workflow run build.yml --ref main`).
 Every run keeps the showcase app ZIP as a workflow artifact; a pull request's is
 named by its number and commit ([pull-request builds](PULL_REQUEST_BUILDS.md)).
 
@@ -15,7 +13,7 @@ named by its number and commit ([pull-request builds](PULL_REQUEST_BUILDS.md)).
 | Asset | Contents |
 | --- | --- |
 | `ps5-fsr4-showcase-VERSION-PPSA99011.zip` | The [showcase app](../examples/fsr4_showcase/README.md) folder, a README, `notices/` and `SHA256SUMS` |
-| `ps5-fsr4-sdk-VERSION.zip` | `dist-sdk`: `libps5_fsr4.a` and its header, the driver SDK, the pipeline cache, the [SDK guide](FSR4_SDK.md), `notices/` and `SHA256SUMS` |
+| `ps5-fsr4-sdk-VERSION.zip` | `dist-sdk`: `libps5_fsr4.a` and its header, the driver SDK, the cache if available, the [SDK guide](FSR4_SDK.md), `notices/` and `SHA256SUMS` |
 | `ps5-fsr4-VERSION-source.tar.gz` | Corresponding source of the GPL code: this repository without `comparisons/`, the Vulkan driver, ps5-agc-gears and the native app template at the built commits |
 | `SHA256SUMS` | SHA-256 of the three assets |
 
@@ -27,8 +25,7 @@ provenance note, and the licenses of everything else in the archive
 `make release VERSION=01.000.000` builds the same assets locally after `make sdk`.
 
 The two ZIPs and the source tarball built by the workflow can be checked with
-`gh attestation verify <file> -R blackbearreloaded/ps5-fsr4` (GitHub CLI); this
-covers releases built by GitHub Actions from now on, not earlier ones.
+`gh attestation verify <file> -R BlackBearRedux/ps5-fsr4 --signer-workflow BlackBearRedux/ps5-fsr4/.github/workflows/build.yml`.
 
 A release's files are the ones the workflow run for its tag built and attested;
 none is attached by hand. If a release for the tag already exists (notes
@@ -48,9 +45,8 @@ into `build/`:
 - dxil-spirv at the converter's commit;
 - DXC from Microsoft's release (the pass tables read DXIL with `dxc -dumpbin`);
 - the BC250 RC11 upscaler DLL and its notices from BC250's release;
-- the pipeline cache, from this repository's
-  [`build-inputs`](https://github.com/blackbearreloaded/ps5-fsr4/releases/tag/build-inputs)
-  pre-release.
+- the optional pipeline cache from the `build-inputs` pre-release, when the
+  pinned asset is available.
 
 `eval "$(python3 tools/fetch_build_inputs.py --env)"` then points the builds at
 them. The driver pins its own dependencies (`make driver-deps`). The workflow
@@ -75,7 +71,8 @@ for more than a minute instead of about 0.1 s. To make a new one:
 2. `python3 tools/fetch_build_inputs.py --pin-cache fsr4-rt-pipeline-cache.bin`
    checks that the driver saved it, updates `tools/build_inputs.json` and prints
    the `gh release upload build-inputs ...` command for the renamed file.
-3. Upload it, then commit the new pin. Earlier caches stay on the
+3. Create the `build-inputs` pre-release for the existing tag if needed.
+   Upload the file, then commit the new pin. Earlier caches stay on the
    `build-inputs` release for the commits that pin them.
 
 ## Cutting a release

@@ -115,7 +115,7 @@ the home screen.
 
 ## Download
 
-Every [pre-release](https://github.com/blackbearreloaded/ps5-fsr4/releases)
+Every [pre-release](https://github.com/BlackBearRedux/ps5-fsr4/releases)
 from 01.000.000 on has `ps5-fsr4-showcase-VERSION-PPSA99011.zip`, built by GitHub
 Actions. Extract it, upload the `PPSA99011` folder to `/data/homebrew/` on a
 PS5 running a homebrew loader with ShadowMountPlus, and start **PS5 FSR4

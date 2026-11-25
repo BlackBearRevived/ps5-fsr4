@@ -30,7 +30,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 DRIVER = ROOT / "external/ps5-vulkan"
 DIST_SDK = ROOT / "dist-sdk"
-REPOSITORY = "blackbearreloaded/ps5-fsr4"
+REPOSITORY = "BlackBearRedux/ps5-fsr4"
 PINS = json.loads((ROOT / "tools/build_inputs.json").read_text())
 TEMPLATE = ROOT / PINS["app_template"]["path"]
 BC250 = ROOT / PINS["bc250_dll"]["path"]
@@ -56,7 +56,7 @@ def provenance():
     return f"""# Provenance of the FSR4 material
 
 This package was built from https://github.com/{REPOSITORY} at `{r['commit']}`,
-with the Vulkan driver https://github.com/blackbearreloaded/ps5-vulkan at `{r['driver']}`.
+with the Vulkan driver https://github.com/mpereiraesaa/ps5-vulkan at `{r['driver']}`.
 
 1. **AMD FidelityFX SDK v2.3.0**, commit `60f4ea81909200d8542eca14dccb2628b763a9a3`:
    AMD's FSR 4.1.1 upscaler, `Kits/FidelityFX/signedbin/amd_fidelityfx_upscaler_dx12.dll`,
@@ -176,8 +176,11 @@ def sdk_zip(path, version):
     top = f"ps5-fsr4-sdk-{version}"
     entries = tree(DIST_SDK, top)
     identity = json.loads((DIST_SDK / "share/ps5fsr4/identity.json").read_text())
-    if "pipeline_cache_sha256" not in identity:
-        raise SystemExit("dist-sdk has no pipeline cache; fetch the pinned one before make sdk")
+    cache_note = (
+        "- `share/ps5fsr4/pipeline-cache-ps5.bin`, compiled on a PS5 for this build.\n"
+        if "pipeline_cache_sha256" in identity else
+        "\nThis build compiles GPU pipelines at startup.\n"
+    )
     entries[f"{top}/FSR4_SDK.md"] = (ROOT / "docs/FSR4_SDK.md").read_bytes()
     entries[f"{top}/README.md"] = f"""# ps5_fsr4 SDK {version}
 
@@ -186,8 +189,8 @@ AMD FSR 4.1.1 (INT8) for native PS5 homebrew on the ps5-vulkan driver:
 - `include/ps5fsr4/ps5_fsr4.h` and `lib/libps5_fsr4.a`, the upscaler;
 - the driver SDK it runs on: `lib/libps5vk.a`, `lib/libpsbc.a`, the Vulkan and
   `ps5vk` headers, the link script and symbol map;
-- `share/ps5fsr4/pipeline-cache-ps5.bin`, compiled on a PS5 for this build, and
-  `identity.json`, the digests of the archives it belongs to.
+- `share/ps5fsr4/identity.json`, the digests of the runtime and driver archives.
+{cache_note}
 
 `FSR4_SDK.md` explains how to create a device, link an application and upscale.
 Build applications with the PS5 payload SDK v0.42 and the native app template, as

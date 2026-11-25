@@ -13,8 +13,8 @@ Everything lands in the ignored build tree, where the other tools look for it:
   release (the DLL must match tools/fsr4_dll_map.json);
 - glslang and SPIRV-Tools at the releases the pipeline cache was made with, built
   from source unless the system's are those releases already;
-- the pipeline cache a PS5 saved for these pass tables and this driver, from this
-  repository's build-inputs release.
+- the optional pipeline cache a PS5 saved for these pass tables and this driver,
+  from this repository's build-inputs release.
 
 --env prints the variables the builds read (PS5VK_LAB_ROOT, PS5_PAYLOAD_SDK,
 PS5_NATIVE_APP_TEMPLATE, DXIL_SPIRV_DIR, and PATH when the shader tools were
@@ -32,6 +32,7 @@ import struct
 import subprocess
 import sys
 import tarfile
+import urllib.error
 import urllib.request
 import zipfile
 
@@ -129,8 +130,7 @@ def extract_zip(archive, members, path):
 def build_template(path):
     """The template's payload SDK, generated libc.prx and host tool, from its own scripts.
 
-    Its sample app is not built: at the pinned commit, LLVM 21's lld leaves that small
-    image without the .data.rel.ro section the tool requires.
+    Only the dependencies used by the showcase are built.
     """
     tool = path / "build/host/ps5-native-tool"
     needed = [tool, path / "runtime/libc.prx", path / ".deps/native/ps5-payload-sdk/bin/prospero-clang"]
@@ -138,9 +138,6 @@ def build_template(path):
         print("building the native app template's SDK, runtime and tool", flush=True)
         subprocess.run(["bash", "tools/setup-native-dependencies.sh"], cwd=path, check=True)
         subprocess.run(["make", "-C", str(path), "runtime/libc.prx"], check=True)
-        # rebuild-libc.sh compiles the tool as tools/build.sh does, into its work folder.
-        tool.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(path / "build/runtime-shim/ps5-native-tool", tool)
     missing = [str(p) for p in needed if not p.is_file()]
     if missing:
         raise SystemExit("the native app template build did not produce " + ", ".join(missing))
@@ -305,9 +302,18 @@ def fetch(pins, only):
     if wanted("pipeline_cache"):
         pin = pins["pipeline_cache"]
         cache = ROOT / pin["path"]
-        if not cache.is_file() or sha256(cache) != pin["sha256"]:
+        if cache.is_file() and sha256(cache) == pin["sha256"]:
+            return
+        cache.unlink(missing_ok=True)
+        try:
+            source = download(pin["url"], pin["sha256"])
+        except urllib.error.HTTPError as error:
+            if error.code != 404 or only:
+                raise
+            print("Pipeline cache is unavailable; apps will compile pipelines at startup.", file=sys.stderr)
+        else:
             cache.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copyfile(download(pin["url"], pin["sha256"]), cache)
+            shutil.copyfile(source, cache)
 
 
 def main():
@@ -336,7 +342,7 @@ def main():
     if args.pin_cache:
         upload = pin_cache(args.pin_cache, pins)
         print(f"pinned {upload.name} in {PINS.relative_to(ROOT)}; publish it before pushing the pin:\n"
-              f"gh release upload build-inputs {upload} --repo blackbearreloaded/ps5-fsr4")
+              f"gh release upload build-inputs {upload} --repo BlackBearRedux/ps5-fsr4")
         return
     if args.check_cache:
         problems = check_cache(pins)
