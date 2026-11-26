@@ -30,7 +30,7 @@ import zipfile
 ROOT = Path(__file__).resolve().parents[1]
 DRIVER = ROOT / "external/ps5-vulkan"
 DIST_SDK = ROOT / "dist-sdk"
-REPOSITORY = "BlackBearRedux/ps5-fsr4"
+REPOSITORY = "BlackBearRevived/ps5-fsr4"
 PINS = json.loads((ROOT / "tools/build_inputs.json").read_text())
 TEMPLATE = ROOT / PINS["app_template"]["path"]
 BC250 = ROOT / PINS["bc250_dll"]["path"]

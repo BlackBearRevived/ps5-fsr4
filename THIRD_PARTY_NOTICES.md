@@ -52,7 +52,7 @@ notice. The BC250 project publishes its modified DLL the same way.
 
 ## Release archives
 
-The [pre-releases](https://github.com/BlackBearRedux/ps5-fsr4/releases)
+The [pre-releases](https://github.com/BlackBearRevived/ps5-fsr4/releases)
 combine GPL-3.0-or-later code (this repository, the Vulkan driver with
 ps5-agc-gears, the native app template), the MIT FSR4 material and the MIT
 shader compiler (opengnm-psbc). Every archive carries `notices/`: AMD's notice,

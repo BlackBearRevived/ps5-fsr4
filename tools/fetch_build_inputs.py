@@ -342,7 +342,7 @@ def main():
     if args.pin_cache:
         upload = pin_cache(args.pin_cache, pins)
         print(f"pinned {upload.name} in {PINS.relative_to(ROOT)}; publish it before pushing the pin:\n"
-              f"gh release upload build-inputs {upload} --repo BlackBearRedux/ps5-fsr4")
+              f"gh release upload build-inputs {upload} --repo BlackBearRevived/ps5-fsr4")
         return
     if args.check_cache:
         problems = check_cache(pins)

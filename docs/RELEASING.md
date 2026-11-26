@@ -26,7 +26,7 @@ provenance note, and the licenses of everything else in the archive
 `make release VERSION=01.000.000` builds the same assets locally after `make sdk`.
 
 The two ZIPs and the source tarball built by the workflow can be checked with
-`gh attestation verify <file> -R BlackBearRedux/ps5-fsr4 --signer-workflow BlackBearRedux/ps5-fsr4/.github/workflows/build.yml`.
+`gh attestation verify <file> -R BlackBearRevived/ps5-fsr4 --signer-workflow BlackBearRevived/ps5-fsr4/.github/workflows/build.yml`.
 
 A release's files are the ones the workflow run for its tag built and attested;
 none is attached by hand. If a release for the tag already exists (notes
