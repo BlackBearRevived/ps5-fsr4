@@ -76,7 +76,7 @@ def main():
                       (index+1, f"expected-{index+1}.bin", "VK_FORMAT_UNDEFINED", 0, 0, page_bytes, "0")]
         pages.append((index, zlib.crc32(oracle)))
     subprocess.run(["make", "fsr4-dxil-converter"], cwd=ROOT, check=True)
-    dxc = ROOT / "build/reference-runtime/dxc/linux_dxc_2026_07_29.x86_x64/bin/dxc"
+    dxc = ROOT / "build/reference-runtime/dxc/linux_dxc_2026_09_28.x86_x64/bin/dxc"
     dxil, spv = out / "precision.dxil", out / "precision.spv"
     subprocess.run([str(dxc), "-T", "cs_6_6", "-E", "main", "-enable-16bit-types",
                     "-D", f"COUNT={page_bytes//4}", "-D", f"ROUND_TO_EVEN={int(args.rounding == 'rte')}", "-Fo", str(dxil),

@@ -9,7 +9,7 @@ assets come from examples/fsr4_showcase/sce_sys (icon0.png, pic0.dds, pic1.dds,
 snd0.at9, made by tools/build_fsr4_showcase_assets.py).
 --host builds an off-screen binary for desktop Vulkan instead: it runs the
 scripted walk and saves a frame of each step (examples/fsr4_showcase/README.md).
---release VERSION also writes ps5-fsr4-showcase-VERSION-PPSA99011.zip and its .sha256.
+--release VERSION also writes the showcase ZIP, PKG and their SHA-256 checksums.
 The environment variable BUILD_LABEL names a build that is not a release, such as a pull
 request's: it is written to build-label.txt in the app folder (docs/PULL_REQUEST_BUILDS.md).
 """
@@ -19,6 +19,8 @@ import json
 import os
 from pathlib import Path
 import re
+import shutil
+import tempfile
 import struct
 import subprocess
 import sys
@@ -175,6 +177,15 @@ def release(out, version):
         raise SystemExit("unexpected param.json")
     digest = hashlib.sha256(archive.read_bytes()).hexdigest()
     (out / (name + ".sha256")).write_text(f"{digest}  {name}\n")
+    with tempfile.TemporaryDirectory(dir=out) as stage:
+        title = Path(stage) / TITLE_ID
+        shutil.copytree(out / TITLE_ID, title)
+        notices = title / "notices"
+        notices.mkdir()
+        for filename, data in package_fsr4_release.notices().items():
+            (notices / filename).write_bytes(data)
+        subprocess.run(["bash", str(ROOT / "tools/build-showcase-pkg.sh"), str(title),
+                        str(archive.with_suffix(".pkg"))], check=True)
     return str(archive)
 
 
@@ -190,7 +201,7 @@ def main():
                         help="Replace the pad with a scripted walk that logs timings, saves frames and exits")
     parser.add_argument("--diagnose", action="store_true",
                         help="Run each GPU stage on its own before the first frame, log it and exit")
-    parser.add_argument("--release", metavar="VERSION", help="Also write the release zip and its SHA-256")
+    parser.add_argument("--release", metavar="VERSION", help="Also write the release ZIP, PKG and their SHA-256 checksums")
     parser.add_argument("--define", action="append", default=[], metavar="NAME=VALUE", help=argparse.SUPPRESS)
     args = parser.parse_args()
     label = build_label()

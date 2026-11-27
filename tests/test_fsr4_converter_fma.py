@@ -40,7 +40,7 @@ void main(uint3 tid : SV_DispatchThreadID) {
 
 
 def main():
-    dxc = ROOT / "build/reference-runtime/dxc/linux_dxc_2026_07_29.x86_x64/bin/dxc"
+    dxc = ROOT / "build/reference-runtime/dxc/linux_dxc_2026_09_28.x86_x64/bin/dxc"
     converter = ROOT / "build/fsr4_dxil_to_spirv"
     sys.path.insert(0, str(ROOT / "tools"))
     from fsr4_paths import TOOLCHAIN_BIN as tools

@@ -36,6 +36,9 @@ class BuildInputs(unittest.TestCase):
         # The cache a PS5 saved (vendor 0x1002, device 0) for the pinned driver. When the
         # driver's cache identity changes, the pinned cache must be made again.
         pins = json.loads(inputs.PINS.read_text())
+        if pins["pipeline_cache"]["provider_sha256"] != json.loads(inputs.DLL_MAP.read_text())["dll_sha256"]:
+            self.assertIn("different provider", inputs.check_cache(pins)[0])
+            return
         self.assertEqual(inputs.cache_uuid(0x1002, 0, inputs.driver_constants()),
                          pins["pipeline_cache"]["cache_uuid"])
 

@@ -8,11 +8,11 @@ resolution chart four times: FSR 4 on the left, a bilinear upscale of the same
 frame on the right.*
 
 > [!WARNING]
-> **Experimental.** FSR4 runs natively on the PS5 and passes its acceptance
+> **Experimental.** The earlier RC11 build ran natively on the PS5 and passed acceptance
 > against the WARP reference in every captured scenario up to 2560×1440.
 > [Pre-releases](https://github.com/BlackBearRevived/ps5-fsr4/releases) carry
 > the showcase app, the SDK and their source. The SDK is built from the BC250
-> RC11 build of AMD's FSR4 provider and needs a diagnostic profile of the Vulkan
+> RC12 build of AMD's FSR4 provider and needs a diagnostic profile of the Vulkan
 > driver.
 
 > [!IMPORTANT]

@@ -55,7 +55,7 @@ $(DRIVER)/build/libpsbc.host.a: | $(DRIVER)/Makefile
 
 # Offline converter for the exact captured shaders. This dependency is host-only.
 fsr4-dxil-converter:
-	test "$$(git -C "$(DXIL_SPIRV_DIR)" rev-parse HEAD)" = f2d1b5541eac934e9c32e8aa664328915336a213
+	test "$$(git -C "$(DXIL_SPIRV_DIR)" rev-parse HEAD)" = 4096eb8d2872922951ec7bf6ceca7a8e74032e19
 	$(PYTHON) tools/prepare_fsr4_converter.py "$(DXIL_SPIRV_DIR)"
 	cmake -S "$(DXIL_SPIRV_DIR)" -B build/dxil-spirv -G Ninja -DCMAKE_BUILD_TYPE=Release -DSPIRV_SKIP_TESTS=ON -DCMAKE_CXX_FLAGS=-DPS5_FSR4_REFERENCE_FP16=1 $(CMAKE_CCACHE)
 	cmake --build build/dxil-spirv --target dxil-spirv-c-shared -j 4
@@ -64,7 +64,7 @@ fsr4-dxil-converter:
 		-Wl,-rpath,'$$ORIGIN/dxil-spirv' -o build/fsr4_dxil_to_spirv
 	build/fsr4_dxil_to_spirv --self-test
 
-# Pass tables from the BC250 RC11 DLL, then dist-sdk: the driver SDK plus libps5_fsr4.a.
+# Pass tables from the BC250 RC12 DLL, then dist-sdk: the driver SDK plus libps5_fsr4.a.
 # The driver SDK is restaged first because the driver's own tests restage it without the profile.
 runtime: fsr4-dxil-converter
 	$(PYTHON) tools/build_fsr4_runtime.py

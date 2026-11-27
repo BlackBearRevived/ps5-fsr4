@@ -68,10 +68,10 @@ def main():
                         help="Generated pass tables (tools/build_fsr4_runtime.py)")
     parser.add_argument("--pipeline-cache", type=Path, default=ROOT / "build/fsr4-runtime/pipeline-cache-ps5.bin",
                         help="Pipeline cache saved on the PS5 by this libps5vk build (optional)")
-    notices = (ROOT / "build/reference-runtime/bc250-rc11/notices/AMD-SDK-LICENSE.md",
+    notices = (ROOT / "build/reference-runtime/bc250-rc12/notices/AMD-SDK-LICENSE.md",
                ROOT.parent / "references/bc250-fsr4-fork/dll/notices/AMD-SDK-LICENSE.md")
     parser.add_argument("--amd-notice", type=Path, default=next((p for p in notices if p.is_file()), notices[0]),
-                        help="AMD FidelityFX SDK notice from the BC250 RC11 DLL release "
+                        help="AMD FidelityFX SDK notice from the BC250 RC12 DLL release "
                              "(tools/fetch_build_inputs.py) or a BC250 FSR4 checkout")
     args = parser.parse_args()
     runtime = args.runtime.resolve()
@@ -112,6 +112,8 @@ def main():
     if args.pipeline_cache.is_file():
         shutil.copyfile(args.pipeline_cache, share / "pipeline-cache-ps5.bin")
         identity["pipeline_cache_sha256"] = sha(share / "pipeline-cache-ps5.bin")
+    else:
+        (share / "pipeline-cache-ps5.bin").unlink(missing_ok=True)
     (share / "identity.json").write_text(json.dumps(identity, indent=2) + "\n")
 
     # 3. Relocated installation: independent C and C++ consumers.

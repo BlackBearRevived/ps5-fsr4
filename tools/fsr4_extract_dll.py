@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # Copyright (C) 2026 BlackBearReloaded
 # SPDX-License-Identifier: GPL-3.0-or-later
-"""Copy one FSR4 shader family and its model out of the BC250 RC11 provider DLL.
+"""Copy one FSR4 shader family and its model out of the BC250 RC12 provider DLL.
 
 The DLL is read as a file, never loaded. tools/fsr4_dll_map.json records, for the
 configuration the runtime supports (linear HDR, auto exposure, render-resolution
@@ -59,7 +59,7 @@ def extract(dll, family):
         raise ValueError(f"unknown family {family}; choose one of {', '.join(FAMILIES)}")
     image = Path(dll).read_bytes()
     if hashlib.sha256(image).hexdigest() != table["dll_sha256"]:
-        raise ValueError("unsupported DLL: expected the BC250 RC11 provider "
+        raise ValueError("unsupported DLL: expected the BC250 RC12 provider "
                          f"(SHA-256 {table['dll_sha256']})")
     entry = table["families"][family]
     shaders = {0: checked(image, int(table["spd"]["file_offset"], 16), table["spd"], "spd")}
@@ -72,7 +72,7 @@ def extract(dll, family):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("dll", type=Path, help="the BC250 RC11 amd_fidelityfx_upscaler_dx12.dll")
+    parser.add_argument("dll", type=Path, help="the BC250 RC12 amd_fidelityfx_upscaler_dx12.dll")
     parser.add_argument("out", type=Path, help="directory for pass<N>.dxil and model.bin")
     parser.add_argument("--family", choices=FAMILIES, default="standard-band0")
     args = parser.parse_args()

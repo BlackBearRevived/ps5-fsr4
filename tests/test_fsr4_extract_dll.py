@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """The DLL map and the pass interface describe every family consistently.
 
-With the BC250 RC11 DLL under build/reference-runtime, every family is also extracted and
+With the BC250 RC12 DLL under build/reference-runtime, every family is also extracted and
 checked against the map; without it, that part is skipped.
 """
 import hashlib
@@ -16,7 +16,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 import fsr4_extract_dll  # noqa: E402
 
-DLL = ROOT / "build/reference-runtime/bc250-rc11/amd_fidelityfx_upscaler_dx12.dll"
+DLL = ROOT / "build/reference-runtime/bc250-rc12/amd_fidelityfx_upscaler_dx12.dll"
 MODEL_SHA256 = {"standard": "a54e552ff69a3f7199861417f7ae461d1f67f636ab532c6ec9d8ea5d2963735a",
                 "ultra-performance": "3c42fc6eabfa9b5b1e489df0e9b2f58e3f9fa22048c584f6839bb27d32a0640e"}
 
@@ -43,7 +43,7 @@ class ExtractDll(unittest.TestCase):
         self.assertEqual(set(rules[2:27:2]), {"PADDING"})
         self.assertEqual(set(rules[3:26:2]), {"NETWORK"})
 
-    @unittest.skipUnless(DLL.is_file(), "the BC250 RC11 DLL is local")
+    @unittest.skipUnless(DLL.is_file(), "the BC250 RC12 DLL is local")
     def test_extraction_matches_the_map(self):
         for family in fsr4_extract_dll.FAMILIES:
             shaders, model = fsr4_extract_dll.extract(DLL, family)

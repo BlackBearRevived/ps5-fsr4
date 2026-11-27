@@ -1,8 +1,8 @@
 diff --git a/dxil_converter.cpp b/dxil_converter.cpp
-index ebb1be9e..32fbf020 100644
+index 9ef03a6..223d002 100644
 --- a/dxil_converter.cpp
 +++ b/dxil_converter.cpp
-@@ -6067,6 +6067,12 @@ spv::Id Converter::Impl::build_value_cast(spv::Id value_id,
+@@ -6231,6 +6231,12 @@ spv::Id Converter::Impl::build_value_cast(spv::Id value_id,
  	Operation *op = allocate(opcode, get_type_id(output_type, 1, components));
  	op->add_id(value_id);
  	add(op);
@@ -15,7 +15,7 @@ index ebb1be9e..32fbf020 100644
  	return op->id;
  }
  
-@@ -7720,6 +7726,14 @@ void Converter::Impl::emit_execution_modes_post_code_generation()
+@@ -7893,6 +7899,14 @@ void Converter::Impl::emit_execution_modes_post_code_generation()
  			b.addExtension("SPV_KHR_float_controls");
  			b.addCapability(spv::CapabilityDenormPreserve);
  			b.addExecutionMode(spirv_module.get_entry_function(), spv::ExecutionModeDenormPreserve, 16);
@@ -31,10 +31,10 @@ index ebb1be9e..32fbf020 100644
  		else if (!options.supports_float16_denorm_preserve && options.quirks.force_denorm_preserve_fp16_conversions)
  		{
 diff --git a/opcodes/dxil/dxil_arithmetic.cpp b/opcodes/dxil/dxil_arithmetic.cpp
-index fe1ad4cc..767e154b 100644
+index 78a2b94..e78936d 100644
 --- a/opcodes/dxil/dxil_arithmetic.cpp
 +++ b/opcodes/dxil/dxil_arithmetic.cpp
-@@ -1236,7 +1236,57 @@ bool emit_dot2_add_half_instruction(Converter::Impl &impl, const llvm::CallInst
+@@ -1320,7 +1320,57 @@ bool emit_dot2_add_half_instruction(Converter::Impl &impl, const llvm::CallInst
  		return true;
  	}
  
@@ -92,7 +92,7 @@ index fe1ad4cc..767e154b 100644
  	dot_op->add_id(a);
  	dot_op->add_id(b);
  	impl.add(dot_op);
-@@ -1244,6 +1294,7 @@ bool emit_dot2_add_half_instruction(Converter::Impl &impl, const llvm::CallInst
+@@ -1328,6 +1378,7 @@ bool emit_dot2_add_half_instruction(Converter::Impl &impl, const llvm::CallInst
  		add_nocontract_decoration(impl, dot_op->id);
  
  	spv::Id expanded_input = dot_op->id;
@@ -100,7 +100,7 @@ index fe1ad4cc..767e154b 100644
  	if (impl.support_native_fp16_operations())
  	{
  		auto *extend_op = impl.allocate(spv::OpFConvert, builder.makeVectorType(float_type_id, 2));
-@@ -1252,6 +1303,8 @@ bool emit_dot2_add_half_instruction(Converter::Impl &impl, const llvm::CallInst
+@@ -1336,6 +1387,8 @@ bool emit_dot2_add_half_instruction(Converter::Impl &impl, const llvm::CallInst
  		expanded_input = extend_op->id;
  	}
  
@@ -110,7 +110,7 @@ index fe1ad4cc..767e154b 100644
  	for (unsigned i = 0; i < 2; i++)
  	{
 diff --git a/opcodes/opcodes_llvm_builtins.cpp b/opcodes/opcodes_llvm_builtins.cpp
-index 4a7f2350..b1c225c6 100644
+index dfbcb09..eccdcef 100644
 --- a/opcodes/opcodes_llvm_builtins.cpp
 +++ b/opcodes/opcodes_llvm_builtins.cpp
 @@ -32,6 +32,9 @@
@@ -227,23 +227,29 @@ index 4a7f2350..b1c225c6 100644
  template <typename InstructionType>
  static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const InstructionType *instruction)
  {
-@@ -1232,7 +1322,14 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
- 		// and force use of QuantizeToFP16 instead.
- 		// Rounding mode of this operation is not well-defined,
- 		// but that is also the case for D3D12. AMD drivers will prefer RTZ here for example.
--		auto *quant_op = impl.allocate(spv::OpQuantizeToF16, instruction);
+@@ -1226,6 +1316,13 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
+ 	if (is_fp16_quant && impl.execution_mode_meta.native_16bit_operations &&
+ 	    !impl.execution_mode_meta.float_controls2)
+ 	{
 +#ifdef PS5_FSR4_REFERENCE_FP16
-+        // The masked FP32 result is already exactly FP16-representable.
-+        // Copy it directly to retain scalar RTZ and FP16 subnormals.
-+        value_id = fsr4_rtz_fp16_input(impl, value_id);
-+        auto *quant_op = impl.allocate(spv::OpCopyObject, instruction);
++		// Preserve scalar RTZ and FP16 subnormals in the widened PS5 shaders.
++		auto *copy = impl.allocate(spv::OpCopyObject, instruction);
++		copy->add_id(fsr4_rtz_fp16_input(impl, value_id));
++		impl.add(copy);
++		return copy->id;
 +#else
-+        auto *quant_op = impl.allocate(spv::OpQuantizeToF16, instruction);
+ 		// D3D12 compilers will enforce a truncate here through a FP32 -> FP16 -> FP32 chain,
+ 		// where Vulkan compilers ... don't :(
+ 		// If we find this pattern, assume that compilers will try to be clever about it (NoContract does not work on NV),
+@@ -1238,6 +1335,7 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
+ 		impl.add(call);
+ 
+ 		return call->id;
 +#endif
- 		quant_op->add_id(value_id);
- 		impl.add(quant_op);
- 		return quant_op->id;
-@@ -1444,7 +1541,15 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
+ 	}
+ 
+ 	if (value_cast_is_noop(impl, instruction, can_relax_precision))
+@@ -1446,7 +1544,15 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
  		else
  			op = impl.allocate(opcode, instruction);
  
@@ -260,7 +266,7 @@ index 4a7f2350..b1c225c6 100644
  		impl.add(op);
  		if (can_relax_precision)
  			impl.decorate_relaxed_precision(instruction->getType(), op->id, false);
-@@ -1452,6 +1557,12 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
+@@ -1454,6 +1560,12 @@ static spv::Id emit_cast_instruction_impl(Converter::Impl &impl, const Instructi
  		// Truncates should be observed.
  		if (impl.execution_mode_meta.float_controls2 && instruction->getOpcode() == llvm::CastInst::CastOps::FPTrunc)
  			add_nocontract_decoration(impl, op->id);

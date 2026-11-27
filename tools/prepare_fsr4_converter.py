@@ -4,7 +4,7 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-PIN = "f2d1b5541eac934e9c32e8aa664328915336a213"
+PIN = "4096eb8d2872922951ec7bf6ceca7a8e74032e19"
 
 
 def prepare(source):

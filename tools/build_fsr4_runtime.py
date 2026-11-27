@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 """Generate the resolution-independent FSR4 runtime tables for src/.
 
-The shaders and the model come from the BC250 RC11 provider DLL (tools/fsr4_extract_dll.py),
+The shaders and the model come from the BC250 RC12 provider DLL (tools/fsr4_extract_dll.py),
 for one model and resolution band; the dispatches' bindings, constant blocks and dispatch
 rules, the same for every family, from tools/fsr4_pass_abi.json. The output header contains
 AMD-derived shaders and model data and is therefore written to the ignored build tree,
@@ -65,7 +65,7 @@ DESCRIPTOR_TYPES = {"srv_image": "SAMPLED_IMAGE", "uav_image": "STORAGE_IMAGE",
                     "cbv": "UNIFORM_BUFFER", "samplers": "SAMPLER"}
 
 
-DXC = ROOT / "build/reference-runtime/dxc/linux_dxc_2026_07_29.x86_x64"
+DXC = ROOT / "build/reference-runtime/dxc/linux_dxc_2026_09_28.x86_x64"
 # Padding-clear passes: one CsTensorSizes row and the allocated tensor extent (+1) are
 # compiled into the shader; right padding is capped at 5 columns, bottom at 1 row.
 PADDING = re.compile(r"cbufferLoadLegacy\.i32\(i32 59, %dx\.types\.Handle %\d+, i32 (\d+)\)[^\n]*\n"
@@ -659,7 +659,7 @@ BUILTIN_SUBGROUP_LOCAL_INVOCATION_ID = 41
 def wave32_lanes(code):
     """Give the Winograd passes their 32-lane waves on any subgroup size.
 
-    RC11's band-1 Winograd passes (dispatches 3, 5, 9, 21 and 25 of standard band 1) are
+    RC12's band-1 Winograd passes (dispatches 3, 5, 9, 21 and 25 of standard band 1) are
     declared WaveSize 32: in each 64-invocation workgroup the wave holding invocation 0
     computes the even pixels and the other wave the odd ones, lane l at pixel 2l (+1). The lane
     becomes local x & 31 and the vote any(local x == 0) becomes local x < 32, which is exactly
@@ -880,8 +880,8 @@ def build_family(args, family, header, env):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--dll", type=Path, default=ROOT / "build/reference-runtime/bc250-rc11/amd_fidelityfx_upscaler_dx12.dll",
-                        help="The BC250 RC11 amd_fidelityfx_upscaler_dx12.dll the shaders and models are read from")
+    parser.add_argument("--dll", type=Path, default=ROOT / "build/reference-runtime/bc250-rc12/amd_fidelityfx_upscaler_dx12.dll",
+                        help="The BC250 RC12 amd_fidelityfx_upscaler_dx12.dll the shaders and models are read from")
     parser.add_argument("--families", default=",".join(fsr4_extract_dll.FAMILIES),
                         help="Comma-separated families to include: a model (standard or ultra-performance) and a "
                              "resolution band (band0: outputs up to 1920x1080, band1: up to 3840x2160); default all")

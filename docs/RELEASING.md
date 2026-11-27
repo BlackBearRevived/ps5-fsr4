@@ -6,7 +6,7 @@ request, push to `main` and version tag builds the driver, FSR4 runtime, SDK,
 demo and showcase. The workflow checks the pipeline cache when available,
 runs the host tests and packages the build. A version tag publishes that
 package as a GitHub pre-release.
-Every run keeps the showcase app ZIP as a workflow artifact; a pull request's is
+Every run keeps the showcase ZIP, PKG and their SHA-256 files as a workflow artifact; a pull request's is
 named by its number and commit ([pull-request builds](PULL_REQUEST_BUILDS.md)).
 
 ## What a release contains
@@ -14,9 +14,10 @@ named by its number and commit ([pull-request builds](PULL_REQUEST_BUILDS.md)).
 | Asset | Contents |
 | --- | --- |
 | `ps5-fsr4-showcase-VERSION-PPSA99011.zip` | The [showcase app](../examples/fsr4_showcase/README.md) folder, a README, `notices/` and `SHA256SUMS` |
+| `ps5-fsr4-showcase-VERSION-PPSA99011.pkg` | Installable showcase with notices |
 | `ps5-fsr4-sdk-VERSION.zip` | `dist-sdk`: `libps5_fsr4.a` and its header, the driver SDK, the cache if available, the [SDK guide](FSR4_SDK.md), `notices/` and `SHA256SUMS` |
 | `ps5-fsr4-VERSION-source.tar.gz` | Corresponding source of the GPL code: this repository without `comparisons/`, the Vulkan driver, ps5-agc-gears and the native app template at the built commits |
-| `SHA256SUMS` | SHA-256 of the three assets |
+| `SHA256SUMS` | SHA-256 of the four assets |
 
 `notices/` holds AMD's notice for the FSR4 material (MIT; see
 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md#amd-fsr4-material)), the provenance of that
@@ -25,7 +26,7 @@ provenance note, and the licenses of everything else in the archive
 (`THIRD-PARTY.md`). `tools/package_fsr4_release.py` writes all of it, and
 `make release VERSION=01.000.000` builds the same assets locally after `make sdk`.
 
-The two ZIPs and the source tarball built by the workflow can be checked with
+The PKG, two ZIPs and source tarball built by the workflow can be checked with
 `gh attestation verify <file> -R BlackBearRevived/ps5-fsr4 --signer-workflow BlackBearRevived/ps5-fsr4/.github/workflows/build.yml`.
 
 A release's files are the ones the workflow run for its tag built and attested;
@@ -45,7 +46,7 @@ into `build/`:
   generated `libc.prx` and the packaging tool come;
 - dxil-spirv at the converter's commit;
 - DXC from Microsoft's release (the pass tables read DXIL with `dxc -dumpbin`);
-- the BC250 RC11 upscaler DLL and its notices from BC250's release;
+- the BC250 RC12 upscaler DLL and its notices from BC250's release;
 - the optional pipeline cache from the `build-inputs` pre-release, when the
   pinned asset is available.
 
@@ -53,8 +54,8 @@ into `build/`:
 them. The driver pins its own dependencies (`make driver-deps`). The workflow
 runs on an Ubuntu 24.04 runner. The cache is only valid for SPIR-V that is
 byte-identical to what it was made from, which needs the same glslang and
-SPIRV-Tools releases: the script builds those (glslang 16.2.0, SPIRV-Tools
-v2026.1) into `build/inputs/shader-tools` and puts them first on `PATH`, unless
+SPIRV-Tools releases: the script builds those (glslang 16.6.0, SPIRV-Tools
+v2026.4) into `build/inputs/shader-tools` and puts them first on `PATH`, unless
 the system's are those releases already. LLVM 21, which the payload SDK builds
 with, comes from [apt.llvm.org](https://apt.llvm.org).
 

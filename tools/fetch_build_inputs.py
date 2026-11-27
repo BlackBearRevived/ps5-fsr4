@@ -9,7 +9,7 @@ Everything lands in the ignored build tree, where the other tools look for it:
   payload SDK it pins (v0.42) and the libc.prx it generates from source;
 - dxil-spirv at the converter's pinned commit, with its submodules;
 - dxc and libdxcompiler.so from Microsoft's DXC release;
-- the BC250 RC11 amd_fidelityfx_upscaler_dx12.dll and its notices, from BC250's
+- the BC250 RC12 amd_fidelityfx_upscaler_dx12.dll and its notices, from BC250's
   release (the DLL must match tools/fsr4_dll_map.json);
 - glslang and SPIRV-Tools at the releases the pipeline cache was made with, built
   from source unless the system's are those releases already;
@@ -240,6 +240,8 @@ def check_cache(pins, runtime=ROOT / "build/fsr4-runtime"):
     """Problems that make the pinned cache miss for this build; empty when it fits."""
     pin = pins["pipeline_cache"]
     cache = ROOT / pin["path"]
+    if pin["provider_sha256"] != json.loads(DLL_MAP.read_text())["dll_sha256"]:
+        return ["the pipeline cache belongs to a different provider"]
     problems = []
     header = cache.read_bytes()[:32] if cache.is_file() else b""
     if len(header) < 32:
@@ -268,7 +270,8 @@ def pin_cache(source, pins):
     digest = hashlib.sha256(data).hexdigest()
     name = f"pipeline-cache-ps5-{digest[:12]}.bin"
     pin = pins["pipeline_cache"]
-    pin.update(url=pin["url"].rsplit("/", 1)[0] + "/" + name, sha256=digest, cache_uuid=expected,
+    pin.update(provider_sha256=json.loads(DLL_MAP.read_text())["dll_sha256"],
+               url=pin["url"].rsplit("/", 1)[0] + "/" + name, sha256=digest, cache_uuid=expected,
                table_sha256=json.loads((ROOT / "build/fsr4-runtime/manifest.json").read_text())["table_sha256"])
     DOWNLOADS.mkdir(parents=True, exist_ok=True)
     (DOWNLOADS / name).write_bytes(data)
@@ -302,6 +305,10 @@ def fetch(pins, only):
     if wanted("pipeline_cache"):
         pin = pins["pipeline_cache"]
         cache = ROOT / pin["path"]
+        if pin["provider_sha256"] != json.loads(DLL_MAP.read_text())["dll_sha256"]:
+            cache.unlink(missing_ok=True)
+            print("No pipeline cache for this provider. The showcase will compile at startup.")
+            return
         if cache.is_file() and sha256(cache) == pin["sha256"]:
             return
         cache.unlink(missing_ok=True)

@@ -20,9 +20,9 @@ the builds at them. GitHub Actions builds the same way
 - The pinned dxil-spirv checkout (`DXIL_SPIRV_DIR`, default
   `../references/dxil-spirv`) and the pinned DXC under
   `build/reference-runtime/dxc/`.
-- The BC250 RC11 build of AMD's `amd_fidelityfx_upscaler_dx12.dll` (SHA-256
-  `8192ea97…`, recorded in `tools/fsr4_dll_map.json`) at
-  `build/reference-runtime/bc250-rc11/`: the pass tables read their shaders and
+- The BC250 RC12 build of AMD's `amd_fidelityfx_upscaler_dx12.dll` (SHA-256
+  `4b0df277…`, recorded in `tools/fsr4_dll_map.json`) at
+  `build/reference-runtime/bc250-rc12/`: the pass tables read their shaders and
   model from it. Nothing from it is committed.
 - For the acceptance and replay tests only: local FSR4 reference exports under
   `build/reference-runtime/`, created as described in
@@ -36,6 +36,7 @@ make driver   # pinned driver dependencies, PSBC (PS5 and host), driver SDK with
 make sdk      # converter, pass tables, then dist-sdk: the driver SDK plus libps5_fsr4.a
 make demo     # PPSA88900 interactive demo against dist-sdk
 make showcase # PPSA99011 showcase app against dist-sdk
+make release VERSION=01.000.000  # showcase ZIP, PKG and checksums, SDK and source
 make check    # host tests
 ```
 

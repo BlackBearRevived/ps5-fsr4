@@ -61,8 +61,8 @@ with the Vulkan driver https://github.com/mpereiraesaa/ps5-vulkan at `{r['driver
 1. **AMD FidelityFX SDK v2.3.0**, commit `60f4ea81909200d8542eca14dccb2628b763a9a3`:
    AMD's FSR 4.1.1 upscaler, `Kits/FidelityFX/signedbin/amd_fidelityfx_upscaler_dx12.dll`,
    which `AMD-SDK-LICENSE.md` lists under its MIT terms.
-2. **BC250 FSR4 RC11** (https://github.com/daniel-h-0/bc250-fsr4-fork, release
-   `opticlient-v1.0.7-bc250.2`, `bc250-fsr4-dll-4.0.0-rc11-docs2.zip`, SHA-256
+2. **BC250 FSR4 RC12** (https://github.com/daniel-h-0/bc250-fsr4-fork, release
+   `v4.0.0-rc12`, `bc250-fsr4-dll-4.0.0-rc12.zip`, SHA-256
    `{r['dll_zip']}`): that DLL with the BC250 project's INT8 optimizations
    (DLL SHA-256 `{r['dll']}`). Its own provenance is `BC250-PROVENANCE.md`.
 3. **ps5-fsr4**: the shaders and INT8 models of the standard and Ultra Performance
@@ -234,6 +234,7 @@ def release_notes(version, assets):
     r = revisions()
     rows = {
         f"ps5-fsr4-showcase-{version}-PPSA99011.zip": "The PS5 FSR4 Showcase app, ready to install (see its README)",
+        f"ps5-fsr4-showcase-{version}-PPSA99011.pkg": "Installable PS5 FSR4 Showcase package",
         f"ps5-fsr4-sdk-{version}.zip": "The ps5_fsr4 SDK for native PS5 applications",
         f"ps5-fsr4-{version}-source.tar.gz": "Corresponding source: this repository with its Vulkan driver, "
                                              "ps5-agc-gears and the native app template",
@@ -273,7 +274,11 @@ def main():
     showcase = ROOT / f"build/fsr4-showcase/ps5-fsr4-showcase-{args.version}-PPSA99011.zip"
     if not showcase.is_file():
         raise SystemExit(f"{showcase} is missing; run make showcase SHOWCASE_ARGS='--release {args.version}'")
-    assets = [shutil.copyfile(showcase, out / showcase.name),
+    pkg = showcase.with_suffix(".pkg")
+    for package in (showcase, pkg):
+        checksum = package.with_name(package.name + ".sha256")
+        shutil.copyfile(checksum, out / checksum.name)
+    assets = [shutil.copyfile(showcase, out / showcase.name), shutil.copyfile(pkg, out / pkg.name),
               sdk_zip(out / f"ps5-fsr4-sdk-{args.version}.zip", args.version),
               source_archive(out / f"ps5-fsr4-{args.version}-source.tar.gz", args.version)]
     (out / "SHA256SUMS").write_text("".join(f"{sha256(Path(a).read_bytes())}  {Path(a).name}\n" for a in assets))

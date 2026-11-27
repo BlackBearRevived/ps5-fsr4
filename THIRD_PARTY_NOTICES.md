@@ -42,7 +42,7 @@ derived sources. Programs linked with the staged SDK (`libps5vk.a`,
 ## AMD FSR4 material
 
 No AMD or BC250 shader, model or DLL is stored in this repository. The build
-copies the shaders and models out of the BC250 RC11 build of AMD's
+copies the shaders and models out of the BC250 RC12 build of AMD's
 `amd_fidelityfx_upscaler_dx12.dll` into `build/fsr4-runtime/fsr4_passes.h`,
 which `libps5_fsr4.a` embeds; the pipeline cache holds them compiled for the
 PS5. AMD's notice, which the SDK stages as `share/ps5fsr4/AMD-SDK-LICENSE.md`,
