@@ -1,5 +1,5 @@
 diff --git a/dxil_converter.cpp b/dxil_converter.cpp
-index 9ef03a6..223d002 100644
+index 9ef03a6..23278bf 100644
 --- a/dxil_converter.cpp
 +++ b/dxil_converter.cpp
 @@ -6231,6 +6231,12 @@ spv::Id Converter::Impl::build_value_cast(spv::Id value_id,
@@ -30,6 +30,21 @@ index 9ef03a6..223d002 100644
  		}
  		else if (!options.supports_float16_denorm_preserve && options.quirks.force_denorm_preserve_fp16_conversions)
  		{
+@@ -9236,9 +9250,14 @@ ConvertedFunction Converter::Impl::convert_entry_point()
+ 
+ 	if (!module_is_dxbc_spirv(module))
+ 	{
++#ifdef PS5_FSR4_REFERENCE_FP16
++		// Match the PS5 profile and the GLSL450 postpass head linked by the runtime builder.
++		execution_mode_meta.memory_model = spv::MemoryModelGLSL450;
++#else
+ 		// New code, just finally go with SPIR-V 1.6 + VkMM by default.
+ 		spirv_module.set_override_spirv_version(0x10600);
+ 		execution_mode_meta.memory_model = spv::MemoryModelVulkan;
++#endif
+ 	}
+ 
+ 	if (execution_model_lib_target && execution_model == spv::ExecutionModelGLCompute)
 diff --git a/opcodes/dxil/dxil_arithmetic.cpp b/opcodes/dxil/dxil_arithmetic.cpp
 index 78a2b94..e78936d 100644
 --- a/opcodes/dxil/dxil_arithmetic.cpp
