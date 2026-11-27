@@ -49,11 +49,11 @@
     "path": "build/inputs/shader-tools"
   },
   "pipeline_cache": {
-    "url": "https://github.com/BlackBearRevived/ps5-fsr4/releases/download/build-inputs/pipeline-cache-ps5-6f0e6bcba425.bin",
-    "sha256": "6f0e6bcba4258153fbe725cca1b4ded19e5208a340f742ec8a54bf7879071a06",
-    "table_sha256": "8e6fd33f4c07d3958342ae59c869eac879b4a6898283a1f4341ece7e8da8af9e",
+    "url": "https://github.com/BlackBearRevived/ps5-fsr4/releases/download/build-inputs/pipeline-cache-ps5-35a4fb6d5297.bin",
+    "sha256": "35a4fb6d5297a94e3a9b09e8403c8cbbbe829de7eba0eeaa14dbc87964941a44",
+    "table_sha256": "d1fe9840950cf8645f646de98fae9410b2db5a22daab9c79ac1f5272cf536ef3",
     "cache_uuid": "e1679a70e0a6aa98b534c63bf21ac45d",
     "path": "build/fsr4-runtime/pipeline-cache-ps5.bin",
-    "provider_sha256": "8192ea97620f8e6407bff346bf905f0d555ff73d89fe14616eb1fa5e41ab3175"
+    "provider_sha256": "4b0df27761d7ced52c30dcbd1641c55bdcf4d2ae10d59f7e5b4b2f895b6bba79"
   }
 }

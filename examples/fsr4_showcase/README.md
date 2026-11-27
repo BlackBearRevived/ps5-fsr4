@@ -138,8 +138,9 @@ Stage the SDK first (`make sdk`, see [BUILDING.md](../../BUILDING.md)), then:
 make showcase
 ```
 
-This builds `build/fsr4-showcase/PPSA99011`. Without the optional GPU pipeline
-cache, the app compiles pipelines at startup. Upload the `PPSA99011` folder to
+This builds `build/fsr4-showcase/PPSA99011`. The RC12 showcase ZIP and PKG
+include a warm GPU pipeline cache. Local builds without the cache compile their
+pipelines at startup. Upload the `PPSA99011` folder to
 `/data/homebrew/` and launch it from the
 home screen once it is registered. The app runs until it is closed. It writes
 `fsr4-showcase-log.txt` to `/data/fsr4-results` (or to its own `results`

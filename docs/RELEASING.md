@@ -3,7 +3,7 @@
 GitHub Actions builds everything from pinned public inputs
 ([`.github/workflows/build.yml`](../.github/workflows/build.yml)). Every pull
 request, push to `main` and version tag builds the driver, FSR4 runtime, SDK,
-demo and showcase. The workflow checks the pipeline cache when available,
+demo and showcase. The workflow checks the pinned pipeline cache,
 runs the host tests and packages the build. A version tag publishes that
 package as a GitHub pre-release.
 Every run keeps the showcase ZIP, PKG and their SHA-256 files as a workflow artifact; a pull request's is
@@ -61,13 +61,14 @@ with, comes from [apt.llvm.org](https://apt.llvm.org).
 
 ## The pipeline cache
 
-RC12 currently compiles its pipelines on the console. The RC11 cache is excluded by provider hash.
-Only a PS5 can make a matching cache. `python3 tools/fetch_build_inputs.py --check-cache`, a
-workflow step, fails when the pinned cache no longer fits this build: the
-driver's cache identity changed (a compiler change bumps
-`PS5VK_COMPILER_IDENTITY_VERSION`), or the pass tables changed. Without a
-fitting cache, creating an FSR4 context on the console compiles its pipelines
-for more than a minute instead of about 0.1 s. To make a new one:
+The RC12 showcase ZIP and PKG both install the PS5-generated cache at
+`assets/pipeline-cache.bin`. The SDK ships the same bytes at
+`share/ps5fsr4/pipeline-cache-ps5.bin`. CI checks the provider, driver cache
+identity and generated pass tables with `python3 tools/fetch_build_inputs.py
+--check-cache`. It also checks the cache digest in the ZIP and the installed
+path and size in the PKG manifest.
+
+To refresh the cache after changing the provider, driver or shaders:
 
 1. Build the runtime test without a cache (`tools/build_fsr4_runtime_test.py`),
    run it on the PS5 and fetch the `fsr4-rt-pipeline-cache.bin` it saves.
@@ -84,7 +85,8 @@ for more than a minute instead of about 0.1 s. To make a new one:
    (`make showcase SHOWCASE_ARGS=--selftest`), run it, and check that it ends
    with `FSR4_SHOWCASE_SELFTEST_DONE`, that every `FSR4_SHOWCASE_OUTPUT` line
    contains the expected output, and that the frames it saved look right.
-   When a pipeline cache is included, check for a `setup_ms` of about 0.1 s.
+   Check that `FSR4_SHOWCASE_READY cache_in` reports the packaged cache size
+   and compare the first output's `setup_ms` with a launch without the cache.
 2. Tag and push. Releases are numbered like PlayStation content versions,
    which is also what the console reports for the installed showcase:
    `git tag v01.000.000 && git push origin v01.000.000`.

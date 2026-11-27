@@ -124,8 +124,9 @@ one by running the runtime test on the PS5 without a cache: it saves
    `vkFlushMappedMemoryRanges`: 41 MB of mapped coherent memory costs about
    1.3 ms per submission.
 5. Save the cache with `vkGetPipelineCacheData` if it was created empty.
-   Without a cache, the first context creation compiles the passes of both
-   models for about 16 s. With the shipped cache it takes under 0.1 s.
+   In the RC12 showcase on a PS5, initial 1080p output setup took about
+   17 s with an empty cache and 85 ms with the shipped cache. This timing
+   includes creating the FSR4 context and output resources.
 6. Link in this order:
    1. `libps5_fsr4.a`;
    2. `libps5vk.a`;
