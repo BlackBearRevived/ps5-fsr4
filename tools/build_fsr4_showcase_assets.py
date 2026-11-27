@@ -12,7 +12,7 @@ turns pictures into the files the console wants and makes the music:
 
 The backgrounds are written as BC7 with a DX10 header, encoded here (mode 6
 only: one pair of endpoints per block, which suits a picture without alpha).
-snd0.wav becomes snd0.at9 with https://github.com/blackbearreloaded/ps5-at9-converter.
+snd0.wav becomes snd0.at9 with https://github.com/BlackBearRevived/ps5-at9-converter.
 Needs numpy and Pillow.
 """
 import argparse

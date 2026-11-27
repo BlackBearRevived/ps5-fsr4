@@ -1287,6 +1287,9 @@ static int run(void)
     double start = now_ms(), last_input = start, last_hud = 0, last_frame_start = start, scene_time = 0, previous_time = 0;
     double sum_fsr = 0, sum_scene = 0, sum_compose = 0, sum_present = 0, sum_frame = 0, hud_ms = 0;
     double step_fsr = 0, step_scene = 0, step_compose = 0, step_frame = 0;
+#ifndef SHOWCASE_HOST
+    unsigned refresh_wait_frames = 0;
+#endif
     int step = -1, step_at = 0, step_count = 0;
     state.chapter_start = state.shot_start = start;
     for (uint32_t frame = 0;; ++frame) {
@@ -1616,6 +1619,22 @@ static int run(void)
         stats.scene_ms = frame ? stats.scene_ms * 0.9 + scene_ms * 0.1 : scene_ms;
         stats.compose_ms = frame ? stats.compose_ms * 0.9 + compose_ms * 0.1 : compose_ms;
         stats.frame_ms = frame ? stats.frame_ms * 0.9 + dt * 0.1 : dt;
+#ifndef SHOWCASE_HOST
+        /* A tiny startup dispatch can finish before its fence wait begins. If two
+         * separate rendering stages consistently complete at the 60 Hz display
+         * interval, batch the frame just as for a refresh-bound startup probe. */
+        if (!period_bound && !measuring) {
+            const double refresh_ms = 1000.0 / 60.0;
+            if (fabs(scene_ms - refresh_ms) < 2.0 && fabs(fsr_ms - refresh_ms) < 2.0)
+                ++refresh_wait_frames;
+            else
+                refresh_wait_frames = 0;
+            if (refresh_wait_frames == 8) {
+                period_bound = 1;
+                report("FSR4_SHOWCASE_SUBMIT scene_ms=%.2f fsr4_ms=%.2f single=1\n", scene_ms, fsr_ms);
+            }
+        }
+#endif
         sum_fsr += fsr_ms; sum_scene += scene_ms; sum_compose += compose_ms; sum_frame += frame_ms;
         if (step >= 0 && step_at > step_frames() / 3) {
             step_fsr += fsr_ms; step_scene += scene_ms; step_compose += compose_ms; step_frame += frame_ms;

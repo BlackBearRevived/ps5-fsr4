@@ -11,7 +11,8 @@ frame on the right.*
 > **Experimental.** The earlier RC11 build ran natively on the PS5 and passed acceptance
 > against the WARP reference in every captured scenario up to 2560×1440.
 > [Pre-releases](https://github.com/BlackBearRevived/ps5-fsr4/releases) carry
-> the showcase app, the SDK and their source. The SDK is built from the BC250
+> the showcase app, the SDK and their source. Current builds package the showcase
+> as a folder ZIP and an installable PKG with SHA-256 checksums. The SDK uses the BC250
 > RC12 build of AMD's FSR4 provider and needs a diagnostic profile of the Vulkan
 > driver.
 

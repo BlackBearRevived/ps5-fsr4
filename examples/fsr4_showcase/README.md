@@ -104,16 +104,22 @@ frame adds 1.6 to 1.9 ms.
 | 10.x | Runs at about 28 fps |
 
 System software 10 completes a GPU submission only at the next display
-refresh, whatever its size. The app notices this when it starts and sends the
+refresh, whatever its size. The app checks for this during startup and during rendering, then sends the
 whole frame as one submission there, which leaves two refreshes per frame: one
 for the frame's work and one for the flip. The times of the frame's parts are
 then not known, so the on-screen display says so instead of showing them, and
-the benchmark only measures that wait. Other versions have not been tried.
+the benchmark only measures that wait. On a PS5 with refresh-paced submissions,
+the RC12 self-test measured 39.9–43.5 ms per frame across the six resolution and
+quality scenarios with grouping enabled, compared with 77.6–79.3 ms when timed
+separately. The screenshots capture the 1920×1080 presentation surface, including
+when the upscaler produces a 3840×2160 image.
 
 If the GPU fails, the app writes the failing stage to its log and returns to
 the home screen.
 
 ## Download
+
+Current Actions builds include the showcase ZIP and PKG with separate SHA-256 files.
 
 Every [pre-release](https://github.com/BlackBearRevived/ps5-fsr4/releases)
 from 01.000.000 on has `ps5-fsr4-showcase-VERSION-PPSA99011.zip`, built by GitHub
@@ -189,7 +195,7 @@ icon and the backgrounds are artwork made for the app: `pic0.dds` is the home
 screen background and `pic1.dds` the picture shown while the app starts.
 `tools/build_fsr4_showcase_assets.py` encodes a 3840×2160 picture as BC7 for
 either background and synthesizes the music, which
-[ps5-at9-converter](https://github.com/blackbearreloaded/ps5-at9-converter)
+[ps5-at9-converter](https://github.com/BlackBearRevived/ps5-at9-converter)
 encodes.
 
 | File | Format |
