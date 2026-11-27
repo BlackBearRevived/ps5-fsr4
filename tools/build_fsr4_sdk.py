@@ -110,6 +110,12 @@ def main():
                     libps5vk_sha256=sha(DIST_SDK / "lib/libps5vk.a"),
                     libps5_fsr4_sha256=sha(DIST_SDK / "lib/libps5_fsr4.a"))
     if args.pipeline_cache.is_file():
+        from fetch_build_inputs import PINS, check_cache
+        pins = json.loads(PINS.read_text())
+        if args.pipeline_cache.resolve() == (ROOT / pins["pipeline_cache"]["path"]).resolve():
+            problems = check_cache(pins, runtime)
+            if problems:
+                raise SystemExit("Cannot stage pipeline cache: " + ", ".join(problems))
         shutil.copyfile(args.pipeline_cache, share / "pipeline-cache-ps5.bin")
         identity["pipeline_cache_sha256"] = sha(share / "pipeline-cache-ps5.bin")
     else:

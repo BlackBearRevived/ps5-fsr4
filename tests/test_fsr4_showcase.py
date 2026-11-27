@@ -96,7 +96,7 @@ class Showcase(unittest.TestCase):
         self.assertIn(
             'gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease \\\n'
             '              --title "PS5 FSR4 ${GITHUB_REF_NAME#v}" --notes-file release-notes.md \\\n'
-            "              *.zip *.tar.gz SHA256SUMS\n",
+            "              *.zip *.pkg *.tar.gz SHA256SUMS\n",
             publish,
         )
         self.assertIn("--json assets --jq '.assets[].name'", publish)

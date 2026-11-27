@@ -61,7 +61,8 @@ with, comes from [apt.llvm.org](https://apt.llvm.org).
 
 ## The pipeline cache
 
-Only a PS5 can make it. `python3 tools/fetch_build_inputs.py --check-cache`, a
+RC12 currently compiles its pipelines on the console. The RC11 cache is excluded by provider hash.
+Only a PS5 can make a matching cache. `python3 tools/fetch_build_inputs.py --check-cache`, a
 workflow step, fails when the pinned cache no longer fits this build: the
 driver's cache identity changed (a compiler change bumps
 `PS5VK_COMPILER_IDENTITY_VERSION`), or the pass tables changed. Without a

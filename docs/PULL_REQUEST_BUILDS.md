@@ -32,7 +32,7 @@ named after the fork.
    **Actions**).
 2. Download the artifact named `ps5-fsr4-PR<number>-<commit>` from the run's **Artifacts**
    list. GitHub requires a signed-in account for this.
-3. Unpack it: it holds `ps5-fsr4-showcase-0.0.0-dev-PPSA99011.zip`. That ZIP holds the
+3. Unpack the artifact to find the installable showcase PKG, both SHA-256 files and `ps5-fsr4-showcase-0.0.0-dev-PPSA99011.zip`. That ZIP holds the
    `PPSA99011` folder, a README, `notices/` and `SHA256SUMS`, which lists every file,
    `PPSA99011/build-label.txt` included. Every entry is stored with permissions 0777, as
    the console wants an app's files. Upload the `PPSA99011` folder to `/data/homebrew/`.
