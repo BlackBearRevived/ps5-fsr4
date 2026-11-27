@@ -7,6 +7,7 @@ After make sdk and make showcase SHOWCASE_ARGS="--release VERSION", this writes 
 
 - ps5-fsr4-showcase-VERSION-PPSA99011.zip: the showcase app, from build/fsr4-showcase;
 - ps5-fsr4-sdk-VERSION.zip: the staged SDK (dist-sdk) with its guide;
+- pipeline-cache-ps5-HASH.bin: the verified cache included in the SDK and showcase;
 - ps5-fsr4-VERSION-source.tar.gz: the corresponding source of the GPL code in both,
   this repository and the Vulkan driver at the built commits, with ps5-agc-gears and
   the native app template at their pins;
@@ -32,6 +33,7 @@ DRIVER = ROOT / "external/ps5-vulkan"
 DIST_SDK = ROOT / "dist-sdk"
 REPOSITORY = "BlackBearRevived/ps5-fsr4"
 PINS = json.loads((ROOT / "tools/build_inputs.json").read_text())
+CACHE_NAME = Path(PINS["pipeline_cache"]["url"]).name
 TEMPLATE = ROOT / PINS["app_template"]["path"]
 BC250 = ROOT / PINS["bc250_dll"]["path"]
 ZIP_TIME = (1980, 1, 1, 0, 0, 0)
@@ -236,6 +238,7 @@ def release_notes(version, assets):
         f"ps5-fsr4-showcase-{version}-PPSA99011.zip": "The PS5 FSR4 Showcase app, ready to install (see its README)",
         f"ps5-fsr4-showcase-{version}-PPSA99011.pkg": "Installable PS5 FSR4 Showcase package",
         f"ps5-fsr4-sdk-{version}.zip": "The ps5_fsr4 SDK for native PS5 applications",
+        CACHE_NAME: "PS5-generated Vulkan pipeline cache, also included in the SDK and showcase",
         f"ps5-fsr4-{version}-source.tar.gz": "Corresponding source: this repository with its Vulkan driver, "
                                              "ps5-agc-gears and the native app template",
         "SHA256SUMS": "SHA-256 of the assets",
@@ -275,11 +278,15 @@ def main():
     if not showcase.is_file():
         raise SystemExit(f"{showcase} is missing; run make showcase SHOWCASE_ARGS='--release {args.version}'")
     pkg = showcase.with_suffix(".pkg")
+    cache = DIST_SDK / "share/ps5fsr4/pipeline-cache-ps5.bin"
+    if sha256(cache.read_bytes()) != PINS["pipeline_cache"]["sha256"]:
+        raise SystemExit(f"{cache} does not match the pinned PS5 pipeline cache")
     for package in (showcase, pkg):
         checksum = package.with_name(package.name + ".sha256")
         shutil.copyfile(checksum, out / checksum.name)
     assets = [shutil.copyfile(showcase, out / showcase.name), shutil.copyfile(pkg, out / pkg.name),
               sdk_zip(out / f"ps5-fsr4-sdk-{args.version}.zip", args.version),
+              shutil.copyfile(cache, out / CACHE_NAME),
               source_archive(out / f"ps5-fsr4-{args.version}-source.tar.gz", args.version)]
     (out / "SHA256SUMS").write_text("".join(f"{sha256(Path(a).read_bytes())}  {Path(a).name}\n" for a in assets))
     (out / "release-notes.md").write_text(release_notes(args.version, [Path(a).name for a in assets]))

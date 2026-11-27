@@ -17,7 +17,8 @@ named by its number and commit ([pull-request builds](PULL_REQUEST_BUILDS.md)).
 | `ps5-fsr4-showcase-VERSION-PPSA99011.pkg` | Installable showcase with notices |
 | `ps5-fsr4-sdk-VERSION.zip` | `dist-sdk`: `libps5_fsr4.a` and its header, the driver SDK, the cache if available, the [SDK guide](FSR4_SDK.md), `notices/` and `SHA256SUMS` |
 | `ps5-fsr4-VERSION-source.tar.gz` | Corresponding source of the GPL code: this repository without `comparisons/`, the Vulkan driver, ps5-agc-gears and the native app template at the built commits |
-| `SHA256SUMS` | SHA-256 of the four assets |
+| `pipeline-cache-ps5-HASH.bin` | The PS5-generated cache bundled in the SDK and showcase, named by its SHA-256 prefix |
+| `SHA256SUMS` | SHA-256 of all five assets |
 
 `notices/` holds AMD's notice for the FSR4 material (MIT; see
 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md#amd-fsr4-material)), the provenance of that
@@ -26,7 +27,7 @@ provenance note, and the licenses of everything else in the archive
 (`THIRD-PARTY.md`). `tools/package_fsr4_release.py` writes all of it, and
 `make release VERSION=01.000.000` builds the same assets locally after `make sdk`.
 
-The PKG, two ZIPs and source tarball built by the workflow can be checked with
+The PKG, two ZIPs, pipeline cache and source tarball published by the workflow can be checked with
 `gh attestation verify <file> -R BlackBearRevived/ps5-fsr4 --signer-workflow BlackBearRevived/ps5-fsr4/.github/workflows/build.yml`.
 
 A release's files are the ones the workflow run for its tag built and attested;

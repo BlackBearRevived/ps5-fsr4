@@ -218,6 +218,7 @@ jobs:
             build/release/ps5-fsr4-showcase-${{ env.VERSION }}-PPSA99011.zip
             build/release/ps5-fsr4-showcase-${{ env.VERSION }}-PPSA99011.pkg
             build/release/ps5-fsr4-sdk-${{ env.VERSION }}.zip
+            build/release/pipeline-cache-ps5-*.bin
             build/release/ps5-fsr4-${{ env.VERSION }}-source.tar.gz
 
       - name: Keep the showcase ZIP, PKG and checksums
@@ -259,7 +260,7 @@ jobs:
           if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
             gh release create "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY" --verify-tag --prerelease \
               --title "PS5 FSR4 ${GITHUB_REF_NAME#v}" --notes-file release-notes.md \
-              *.zip *.pkg *.tar.gz SHA256SUMS
+              *.zip *.pkg *.tar.gz pipeline-cache-ps5-*.bin SHA256SUMS
             exit 0
           fi
           # The release exists (notes written ahead, or a draft): its title and notes stay, and
@@ -268,7 +269,7 @@ jobs:
           has() { grep -Fxq -- "$1" <<< "$existing"; }
           kept() { echo "::warning title=Release file not from this run::A release for $TAG already has $1; it was not replaced. It was not published by this run and may have no attestation."; }
           all_from_this_run=true
-          for file in *.zip *.pkg *.tar.gz; do
+          for file in *.zip *.pkg *.tar.gz pipeline-cache-ps5-*.bin; do
             if has "$file"; then
               kept "$file"
               all_from_this_run=false
